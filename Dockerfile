@@ -5,8 +5,8 @@
 # https://sourceforge.net/projects/q4wine/                                        #
 ###################################################################################
 
-FROM ubuntu:18.04
-MAINTAINER B.K.Jayasundera
+FROM ubuntu:20.04
+MAINTAINER Jeroen v Drongelen
 
 # environment variables
 ENV HOME=/root \
@@ -18,15 +18,50 @@ ENV HOME=/root \
     DISPLAY_HEIGHT=768
 
 ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && apt-get full-upgrade --auto-remove --purge -y && rm -rf /var/lib/apt/lists/*
 
-RUN dpkg --add-architecture i386 \
-    && apt update \
-    && apt -y install xvfb x11vnc xdotool git supervisor net-tools fluxbox gnupg2 xfce4-terminal tzdata q4wine \
-    && WINEARCH=win32 \
-    && rm -rf /var/lib/apt/lists/*
+RUN echo "resolvconf resolvconf/linkify-resolvconf boolean false" | debconf-set-selections
+RUN echo "Set disable_coredump false" >> /etc/sudo.conf
+COPY src/etc/apt /etc/apt
+RUN apt-get update
+RUN apt-get install -y apt-utils aptitude sudo
+RUN echo "********************** apt-get upgrade **********************" && apt-get -o Dpkg::Options::="--force-confnew" --fix-broken -y --purge --auto-remove --allow-downgrades --allow-remove-essential --allow-change-held-packages upgrade
+RUN aptitude install \
+  -y \
+  ubuntu-desktop_ \
+  ubuntu-desktop-minimal_ \
+  gnome-initial-setup_ \
+  initramfs-tools_ \
+  brltty_ \
+  orca_ \
+  speech-dispatcher_ \
+  kernelstub_ \
+  linux-image-5.4.0-7634-generic_ \
+  lilo_ \
+  foomatic-db_ \
+  foomatic-db-engine_ \
+  initramfs-tools_
+
+RUN aptitude install \
+  pop-desktop+ flatpak+ \
+  -y \
+  ubuntu-desktop_ \
+  ubuntu-desktop-minimal_ \
+  gnome-initial-setup_ \
+  initramfs-tools_ \
+  brltty_ \
+  orca_ \
+  speech-dispatcher_ \
+  kernelstub_ \
+  linux-image-5.4.0-7634-generic_ \
+  lilo_ \
+  foomatic-db_ \
+  foomatic-db-engine_ \
+  initramfs-tools_
+  
+RUN flatpak remote-add --if-not-exists "flathub" "https://flathub.org/repo/flathub.flatpakrepo"
 
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
- 
 WORKDIR /root/
 RUN git clone https://github.com/novnc/noVNC.git /root/noVNC \
         && git clone https://github.com/novnc/websockify /root/noVNC/utils/websockify \
