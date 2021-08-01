@@ -29,7 +29,7 @@ RUN echo "********************** apt-get upgrade **********************" && apt-
 RUN aptitude install \
   -y \
   ubuntu-desktop_ \
-  supervisord \
+  supervisor \
   ubuntu-desktop-minimal_ \
   gnome-initial-setup_ \
   initramfs-tools_ \
