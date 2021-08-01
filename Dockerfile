@@ -53,7 +53,6 @@ RUN aptitude install \
   orca_ \
   speech-dispatcher_ \
   kernelstub_ \
-  linux-image-5.4.0-7634-generic_ \
   lilo_ \
   foomatic-db_ \
   foomatic-db-engine_ \
