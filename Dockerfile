@@ -29,6 +29,7 @@ RUN echo "********************** apt-get upgrade **********************" && apt-
 RUN aptitude install \
   -y \
   ubuntu-desktop_ \
+  xvfb \
   x11vnc \
   supervisor \
   ubuntu-desktop-minimal_ \
